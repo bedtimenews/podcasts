@@ -1,0 +1,3 @@
+[submodule "themes/chromate"]
+	path = themes/chromate
+	url = https://github.com/bedtimenews/hexo-theme-chromate
