@@ -21,13 +21,12 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: true # Checkout private submodules(themes or something else).
-    - name: Pull config
-      uses: actions/checkout@v3
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.7.0
       with:
-        repository: bedtimenews/podcast-config
-        ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
-        ref: $GITHUB_REF_NAME
-        path: themes/chromate/themes_conf
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Pull config
+      run: git clone git@github.com:bedtimenews/podcast-config.git -b $GITHUB_REF_NAME --single-branch themes/chromate/themes_conf
     - name: Link config
       run: ln -s themes_conf/_config.yml themes/chromate/_config.yml
     - name: Setup Node
@@ -39,10 +38,6 @@ jobs:
       run: yarn install --frozen-lockfile # optional, --immutable
     - name: Build
       run: yarn build
-    - name: Setup SSH
-      uses: webfactory/ssh-agent@v0.7.0
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
     - name: Add known host
       run:
         echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
