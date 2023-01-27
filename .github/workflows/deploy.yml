@@ -16,6 +16,15 @@ jobs:
       uses: actions/checkout@v3
       with:
         submodules: true # Checkout private submodules(themes or something else).
+    - name: Pull config
+      uses: actions/checkout@v3
+      with:
+        repository: bedtimenews/podcast-config
+        token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+        ref: $GITHUB_REF_NAME
+        path: themes/chromate/themes_conf
+    - name: Link config
+      run: ln -s themes_conf/_config.yml themes/chromate/_config.yml
     - name: Setup Node
       uses: actions/setup-node@v3
       with:
