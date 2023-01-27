@@ -29,6 +29,9 @@ jobs:
       uses: webfactory/ssh-agent@v0.7.0
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Add known host
+      run:
+        echo ${{ secrets.SSH_KNOWN_HOSTS }} >> ~/.ssh/known_hosts
     - name: Publish
       run: |
         rsync -av --delete public/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.WEB_ROOT }}/$GITHUB_REF_NAME
