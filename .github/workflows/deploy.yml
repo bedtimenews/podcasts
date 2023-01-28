@@ -1,0 +1,46 @@
+name: Build & Deploy to remote host
+on:
+  push:
+    branches:
+      - main
+      - reference
+      - daily
+    paths-ignore:
+      - .gitignore
+  workflow_dispatch: # Manually trigger the workflow
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Configure Git
+      run: |
+        git config --global user.name ${{ secrets.GIT_USERNAME }}
+        git config --global user.email ${{ secrets.GIT_EMAIL }}
+        git config --global init.defaultBranch main
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        submodules: true # Checkout private submodules(themes or something else).
+    - name: Setup SSH
+      uses: webfactory/ssh-agent@v0.7.0
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+    - name: Pull config
+      run: git clone git@github.com:bedtimenews/podcast-config.git -b $GITHUB_REF_NAME --single-branch themes/chromate/themes_conf
+    - name: Link config
+      run: ln -s themes_conf/_config.yml themes/chromate/_config.yml
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 18
+        cache: yarn
+    - name: Install Dependencies
+      run: yarn install --frozen-lockfile # optional, --immutable
+    - name: Build
+      run: yarn build
+    - name: Add known host
+      run:
+        echo "${{ secrets.SSH_KNOWN_HOSTS }}" >> ~/.ssh/known_hosts
+    - name: Publish
+      run: |
+        rsync -av --delete public/ ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }}:${{ secrets.WEB_ROOT }}/$GITHUB_REF_NAME
