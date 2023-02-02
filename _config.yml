@@ -103,3 +103,8 @@ theme: chromate
 ## Docs: https://hexo.io/docs/one-command-deployment
 deploy:
   type: ""
+
+# Sitemap
+sitemap:
+  tags: false
+  categories: false
