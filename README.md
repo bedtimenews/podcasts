@@ -2,7 +2,7 @@
 bedtime.news基于睡前消息编辑部的节目与新闻维护的系列播客站点。
 
 ## 公告
-**因运营计划调整，睡前消息系列播客暂停维护，您可以到[archive.bedtime.news](https://archive.bedtime.news)查看文字版。 **
+**因运营计划调整，睡前消息系列播客暂停维护，您可以到[archive.bedtime.news](https://archive.bedtime.news)查看文字版。**
 
 ## 分支
 
